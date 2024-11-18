@@ -1,9 +1,9 @@
-matplotlib==3.9.2
-numpy==1.24.3
-pandas==2.0.2
-scikit_learn==1.5.2
-seaborn==0.13.2
-streamlit==1.39.0
-setuptools>=58.0.0
-wheel>=0.37.0
+matplotlib
+numpy
+pandas
+scikit_learn
+seaborn
+streamlit
+setuptools
+wheel
 
