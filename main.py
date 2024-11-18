@@ -79,22 +79,22 @@ if "exercise_type" not in st.session_state:
 with col1:
     if st.button("Cardio", key="cardio_button"):
         st.session_state["exercise_type"] = 0
-    st.image("images/cardio.png", width=200, caption="Cardio")
+    st.image("images/cardio.PNG", width=200, caption="Cardio")
 
 with col2:
     if st.button("HIIT", key="hiit_button"):
         st.session_state["exercise_type"] = 1
-    st.image("images/hiit.png", width=200, caption="HIIT")
+    st.image("images/hiit.PNG", width=200, caption="HIIT")
 
 with col3:
     if st.button("Strength", key="strength_button"):
         st.session_state["exercise_type"] = 2
-    st.image("images/strength.png", width=200, caption="Strength")
+    st.image("images/strength.PNG", width=200, caption="Strength")
 
 with col4:
     if st.button("Yoga", key="yoga_button"):
         st.session_state["exercise_type"] = 3
-    st.image("images/yoga.png", width=200, caption="Yoga")
+    st.image("images/yoga.PNG", width=200, caption="Yoga")
 
 exercise_type = st.session_state.get("exercise_type", None)
 
