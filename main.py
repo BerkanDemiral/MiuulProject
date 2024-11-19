@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import numpy as np
 import warnings
+import plotly.graph_objects as go
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -79,22 +80,22 @@ if "exercise_type" not in st.session_state:
 with col1:
     if st.button("Cardio", key="cardio_button"):
         st.session_state["exercise_type"] = 0
-    st.image("images/cardio.PNG", width=200, caption="Cardio")
+    st.image("images/cardio.png", width=200, caption="Cardio")
 
 with col2:
     if st.button("HIIT", key="hiit_button"):
         st.session_state["exercise_type"] = 1
-    st.image("images/hiit.PNG", width=200, caption="HIIT")
+    st.image("images/hiit.png", width=200, caption="HIIT")
 
 with col3:
     if st.button("Strength", key="strength_button"):
         st.session_state["exercise_type"] = 2
-    st.image("images/strength.PNG", width=200, caption="Strength")
+    st.image("images/strength.png", width=200, caption="Strength")
 
 with col4:
     if st.button("Yoga", key="yoga_button"):
         st.session_state["exercise_type"] = 3
-    st.image("images/yoga.PNG", width=200, caption="Yoga")
+    st.image("images/yoga.png", width=200, caption="Yoga")
 
 exercise_type = st.session_state.get("exercise_type", None)
 
@@ -151,6 +152,41 @@ if st.button("Tahminleme Yap"):
                 f"Bugünkü egzersizinizle ilgili sonuçlarınızı özetlemek gerekirse: **BMI** değeriniz **{bmi:.2f}**, vücut yağ oranınız **{fat_percentage:.2f}%** ve yakılan tahmini kalori miktarı **{predicted_calories:.2f} kalori** olarak hesaplanmıştır.\n\n"
                 "Bu sonuçlar, obezite kategorisinde yer aldığınızı gösterebilir. Sağlıklı bir kilo kontrolü için bir beslenme uzmanı veya fitness uzmanı ile çalışmanız, düzenli fiziksel aktivite ve sağlıklı bir diyet planı oluşturmanız önerilir."
             )
+
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=predicted_calories,
+            title={'text': "Tahmini Kalori Yakımı"},
+            gauge={
+                'axis': {'range': [0, 1500]},
+                'steps': [
+                    {'range': [0, 500], 'color': "lightgray"},
+                    {'range': [500, 1000], 'color': "lightgreen"},
+                    {'range': [1000, 1500], 'color': "red"}
+                ],
+                'threshold': {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': predicted_calories}
+            }
+        ))
+
+        # Radar chart for user stats
+        categories = ['BMI', 'Fat %', 'Exercise Duration (hr)', 'Water Intake (L)']
+        user_data = [bmi, fat_percentage, exercise_duration / 60, water_intake]
+        fig_radar = go.Figure()
+        fig_radar.add_trace(go.Scatterpolar(
+            r=user_data,
+            theta=categories,
+            fill='toself',
+            name='Kullanıcı'
+        ))
+
+        # Display the two charts side by side
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.plotly_chart(fig_gauge, use_container_width=True)
+
+        with col2:
+            st.plotly_chart(fig_radar, use_container_width=True)
 
     else:
         st.warning("Lütfen cinsiyet ve egzersiz türünü seçin.")
