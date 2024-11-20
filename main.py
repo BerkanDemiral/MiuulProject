@@ -18,10 +18,8 @@ st.title(":orange[Calories]:blue[ Burned During]:red[ Exercise]")
 def load_data():
     return pd.read_csv("dataset/lastDataset.csv")
 
-# Veri yükleme
 data = load_data()
 
-# Modeli eğitme
 X = data.drop(columns=["Calories_Burned"])
 y = data["Calories_Burned"]
 
@@ -32,13 +30,11 @@ X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, 
 model = RandomForestRegressor(random_state=42)
 model.fit(X_train, y_train)
 
-# Encoder'ları oluşturma
 le_gender = LabelEncoder()
 le_workout_type = LabelEncoder()
 X["Gender"] = le_gender.fit_transform(X["Gender"])
 X["Workout_Type"] = le_workout_type.fit_transform(X["Workout_Type"])
 
-# Sekmeler oluşturma
 tab1, tab2, tab3 = st.tabs(["👴 Vücut Bilgileri", "🏄 Egzersiz Verileri", "🫀 Nabız Verileri"])
 
 with tab1:
@@ -110,27 +106,27 @@ with tab3:
     avg_bpm = st.number_input("Ortalama Nabız", min_value=0, step=1, value=80)
     resting_bpm = st.number_input("Dinlenme Nabzı", min_value=0, step=1, value=60)
 
-    # Tahminleme butonu yalnızca bu sekmede olacak
+    
     if st.button("Tahminleme Yap"):
         if gender_value is not None and workout_type_value is not None:
             height_m = height / 100
             bmi = weight / (height_m ** 2)
             fat_percentage = 1.20 * bmi + 0.23 * age - (16.2 if gender_value == 1 else 5.4)
 
-            # Kullanıcı verilerini hazırlama
+            
             input_data = np.array([[age, gender_value, weight, height_m, max_bpm, avg_bpm, resting_bpm,
                                     exercise_duration / 60, workout_type_value, fat_percentage, water_intake, bmi]])
             input_data_scaled = scaler.transform(input_data)
 
-            # Model tahmini
+            
             predicted_calories = model.predict(input_data_scaled)[0]
 
-            # Sonuçları gösterme
+            
             st.subheader("Tahmin Sonucu")
             st.write(f"Tahmini Yakılan Kalori: {predicted_calories:.2f} kalori")
             st.write(f"BMI: {bmi:.2f}, Yağ Oranı: {fat_percentage:.2f}%")
 
-            # BMI'ye göre geri bildirim mesajları
+            
             if bmi < 18.5:
                 st.success(
                     f"Egzersiz verileriniz incelendiğinde, **BMI** değeriniz **{bmi:.2f}**, yağ oranınız **{fat_percentage:.2f}%** ve tahmin edilen kalori yakımınız **{predicted_calories:.2f} kalori** olarak hesaplanmıştır.\n\n"
@@ -153,7 +149,7 @@ with tab3:
                     "Bu sonuçlar, obezite kategorisinde yer aldığınızı gösterebilir. Sağlıklı bir kilo kontrolü için bir beslenme uzmanı veya fitness uzmanı ile çalışmanız, düzenli fiziksel aktivite ve sağlıklı bir diyet planı oluşturmanız önerilir."
                 )
 
-            # Gösterge grafiği
+            
             fig_gauge = go.Figure(go.Indicator(
                 mode="gauge+number",
                 value=predicted_calories,
@@ -169,7 +165,7 @@ with tab3:
                 }
             ))
 
-            # Radar grafiği
+            
             categories = ['BMI', 'Fat %', 'Exercise Duration (hr)', 'Water Intake (L)']
             user_data = [bmi, fat_percentage, exercise_duration / 60, water_intake]
             fig_radar = go.Figure()
@@ -180,7 +176,7 @@ with tab3:
                 name='Kullanıcı'
             ))
 
-            # Grafikleri gösterme
+            
             col1, col2 = st.columns(2)
             with col1:
                 st.plotly_chart(fig_gauge, use_container_width=True)
